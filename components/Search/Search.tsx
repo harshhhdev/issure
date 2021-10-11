@@ -97,7 +97,7 @@ const Search: React.FC = () => {
       {loading ? (
         !error && !tags && <IssueLoader />
       ) : (
-        error || !issueVisible ? '' : (
+        error ? '' : (
         <Issue
           title={title!}
           date={date!}
