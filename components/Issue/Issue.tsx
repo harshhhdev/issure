@@ -35,7 +35,7 @@ const Issue: React.FC<{
 
   return (
     <S.IssueBox>
-      <S.IssueTitle href={link} target='_blank' rel='noreferrer'>
+      <S.IssueTitle title={title} href={link} target='_blank' rel='noreferrer'>
         #{number} {title.length > 30 ? title.slice(0, 30) + '...' : title}
       </S.IssueTitle>
       <S.IssueDescription>
@@ -54,6 +54,7 @@ const Issue: React.FC<{
             href={label.url}
             target='_blank'
             rel='noreferrer'
+            title={label.name}
           >
             {label.name.length > 12
               ? label.name.slice(0, 12) + '...'

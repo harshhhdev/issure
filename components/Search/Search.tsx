@@ -4,6 +4,7 @@ import * as S from './Search.style'
 import LiquidButton from '@components/LiquidButton'
 import { Octokit } from '@octokit/rest'
 import Issue from '@components/Issue/Issue'
+import IssueLoader from '@components/IssueLoader/IssueLoader'
 
 export type label =
   | string
@@ -30,6 +31,7 @@ const Search: React.FC = () => {
   const [number, setNumber] = React.useState<number>()
   const [tags, setTags] = React.useState<label[]>()
   const [error, setError] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
 
   const [repoDetails, setRepoDetails] = React.useState([''])
 
@@ -42,15 +44,17 @@ const Search: React.FC = () => {
   }, [])
 
   const FetchIssues = () => {
+    setLoading(true)
+    setError(false)
     octo
       .paginate(octo.issues.listForRepo, {
         owner: repoDetails[0],
         repo: repoDetails[1],
       })
-      .then((issues) => {
+      .then(issues => {
         console.log(repoDetails)
 
-        issues = issues.filter((el) => !Boolean(el.pull_request));
+        issues = issues.filter(el => !Boolean(el.pull_request))
 
         let issueNumbers = []
 
@@ -69,10 +73,11 @@ const Search: React.FC = () => {
         setLink(issues[issueIndex].html_url)
         setNumber(issues[issueIndex].number)
         setTags(issues[issueIndex].labels)
+        setLoading(false)
 
         setError(false)
       })
-      .catch((err) => setError(true))
+      .catch(err => setError(true))
   }
 
   return (
@@ -84,15 +89,15 @@ const Search: React.FC = () => {
           ref={inputRef}
         />
         <S.SearchError>
-          {error
-            ? "Whoops! We couldn't find any issues for that repository. Double check the spelling!"
-            : ''}
+          {error &&
+            "Whoops! We couldn't find any issues for that repository. Double check the spelling!"}
         </S.SearchError>
         <LiquidButton GetIssues={FetchIssues} />
       </S.SearchInputContainer>
-      {tags == undefined ? (
-        ''
+      {loading ? (
+        !error && !tags && <IssueLoader />
       ) : (
+        error ? '' : (
         <Issue
           title={title!}
           date={date!}
@@ -101,7 +106,7 @@ const Search: React.FC = () => {
           link={link!}
           number={number!}
           labels={tags!}
-        />
+        />)
       )}
     </S.SearchContainer>
   )
