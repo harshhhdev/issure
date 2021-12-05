@@ -1,10 +1,14 @@
 import React from 'react'
 
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'
+
+import ReactLoading from 'react-loading'
+
 import * as S from './Search.style'
 import LiquidButton from '@components/LiquidButton'
 import { Octokit } from '@octokit/rest'
 import Issue from '@components/Issue/Issue'
-import IssueLoader from '@components/IssueLoader/IssueLoader'
 
 export type label =
   | string
@@ -30,7 +34,6 @@ const Search: React.FC = () => {
   const [authorLink, setAuthorLink] = React.useState<string>()
   const [number, setNumber] = React.useState<number>()
   const [tags, setTags] = React.useState<label[]>()
-  const [error, setError] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
 
   const [repoDetails, setRepoDetails] = React.useState([''])
@@ -43,9 +46,21 @@ const Search: React.FC = () => {
     })
   }, [])
 
+  const ErrorMsg = (msg: string) => {
+    toast.error(msg, {
+      position: 'bottom-center',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    })
+  }
+
   const FetchIssues = () => {
     setLoading(true)
-    setError(false)
+
     octo
       .paginate(octo.issues.listForRepo, {
         owner: repoDetails[0],
@@ -58,9 +73,8 @@ const Search: React.FC = () => {
 
         let issueNumbers = []
 
-        for (let i = 0; i < issues.length; i++) {
+        for (let i = 0; i < issues.length; i++)
           issueNumbers.push(issues[i].number)
-        }
 
         const issueIndex = Math.floor(
           Math.random() * Math.floor(issueNumbers.length)
@@ -74,10 +88,12 @@ const Search: React.FC = () => {
         setNumber(issues[issueIndex].number)
         setTags(issues[issueIndex].labels)
         setLoading(false)
-
-        setError(false)
       })
-      .catch(err => setError(true))
+      .catch(err => {
+        console.log(err)
+        ErrorMsg("Whoops! Can't fetch issues")
+        setLoading(false)
+      })
   }
 
   return (
@@ -88,26 +104,35 @@ const Search: React.FC = () => {
           spellCheck='false'
           ref={inputRef}
         />
-        <S.SearchError>
-          {error &&
-            "Whoops! We couldn't find any issues for that repository. Double check the spelling!"}
-        </S.SearchError>
         <LiquidButton GetIssues={FetchIssues} />
       </S.SearchInputContainer>
       {loading ? (
-        !error && !tags && <IssueLoader />
+        <ReactLoading type='spin' color='#275efe' />
       ) : (
-        error ? '' : (
-        <Issue
-          title={title!}
-          date={date!}
-          author={author!}
-          authorURL={authorLink!}
-          link={link!}
-          number={number!}
-          labels={tags!}
-        />)
+        tags !== undefined && (
+          <Issue
+            title={title!}
+            date={date!}
+            author={author!}
+            authorURL={authorLink!}
+            link={link!}
+            number={number!}
+            labels={tags!}
+          />
+        )
       )}
+      <ToastContainer
+        position='bottom-center'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='colored'
+      />
     </S.SearchContainer>
   )
 }

@@ -15,7 +15,7 @@ export const SearchInputContainer = styled('div', {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  height: '70vh',
+  margin: '20vh 0 10vh 0',
 })
 
 export const SearchInput = styled('input', {
