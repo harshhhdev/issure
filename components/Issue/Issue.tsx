@@ -1,7 +1,18 @@
 import React from 'react'
 import { Calendar, User } from 'react-feather'
 
-import { label } from '@components/Search/Search'
+export type Label =
+  | string
+  | {
+      id?: number | undefined
+      node_id?: string | undefined
+      url?: string | undefined
+      name?: string | undefined
+      description?: string | null | undefined
+      color?: string | null | undefined
+      default?: boolean | undefined
+    }
+
 import * as S from './Issue.style'
 
 const Issue: React.FC<{
@@ -11,7 +22,7 @@ const Issue: React.FC<{
   authorURL: string
   link: string
   number: number
-  labels: label[]
+  labels: Label[]
 }> = ({ title, date, author, authorURL, link, number, labels }) => {
   const unixDate = new Date(date)
   const months = [
@@ -48,19 +59,20 @@ const Issue: React.FC<{
         </a>
       </S.IssueDescription>
       <S.Labels>
-        {labels.slice(0, 3).map((label: any, index) => (
-          <S.Label
-            key={index}
-            href={label.url}
-            target='_blank'
-            rel='noreferrer'
-            title={label.name}
-          >
-            {label.name.length > 12
-              ? label.name.slice(0, 12) + '...'
-              : label.name}
-          </S.Label>
-        ))}
+        {typeof labels !== 'string' &&
+          labels.slice(0, 3).map((label: any, index: number) => (
+            <S.Label
+              key={index}
+              href={label.url}
+              target='_blank'
+              rel='noreferrer'
+              title={label.name}
+            >
+              {label.name.length > 12
+                ? label.name.slice(0, 12) + '...'
+                : label.name}
+            </S.Label>
+          ))}
       </S.Labels>
     </S.IssueBox>
   )

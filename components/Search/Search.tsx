@@ -9,18 +9,7 @@ import * as S from './Search.style'
 import LiquidButton from '@components/LiquidButton'
 import { Octokit } from '@octokit/rest'
 import Issue from '@components/Issue/Issue'
-
-export type label =
-  | string
-  | {
-      id?: number | undefined
-      node_id?: string | undefined
-      url?: string | undefined
-      name?: string | undefined
-      description?: string | null | undefined
-      color?: string | null | undefined
-      default?: boolean | undefined
-    }
+import { label } from '@components/Issue/Issue'
 
 const Search: React.FC = () => {
   const octo = new Octokit({})
