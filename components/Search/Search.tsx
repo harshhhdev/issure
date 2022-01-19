@@ -9,7 +9,7 @@ import * as S from './Search.style'
 import LiquidButton from '@components/LiquidButton'
 import { Octokit } from '@octokit/rest'
 import Issue from '@components/Issue/Issue'
-import { label } from '@components/Issue/Issue'
+import { Label } from '@components/Issue/Issue'
 
 const Search: React.FC = () => {
   const octo = new Octokit({})
