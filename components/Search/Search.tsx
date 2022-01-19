@@ -22,7 +22,7 @@ const Search: React.FC = () => {
   const [link, setLink] = React.useState<string>()
   const [authorLink, setAuthorLink] = React.useState<string>()
   const [number, setNumber] = React.useState<number>()
-  const [tags, setTags] = React.useState<label[]>()
+  const [tags, setTags] = React.useState<Label[]>()
   const [loading, setLoading] = React.useState(false)
 
   const [repoDetails, setRepoDetails] = React.useState([''])
